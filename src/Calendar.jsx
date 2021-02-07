@@ -75,6 +75,9 @@ export default class Calendar extends Component {
     }
   }
 
+  /**
+   * Create the initial month view
+   */
   initializeMonth() {
     const initialMonth = this.getCurrentMonth(this.state.currentDate.dayNumber)
     if (this.state.currentMonth === '') {
@@ -85,8 +88,10 @@ export default class Calendar extends Component {
   }
 
   /**
+   * Filter dateTable to display the days of the selected month
    * 
-   * @param {*} day 
+   * @param {Number} dayNumber The index of the selected day
+   * @return {Array}
    */
   getCurrentMonth = (dayNumber) => {
     let offsetDay = dayNumber
@@ -103,7 +108,6 @@ export default class Calendar extends Component {
       }
     }
     const startDate = this.dateTable[offsetDay].dayNumber
-    // const daysShown = startOffset < this.dateTable[dayNumber].monthMaxDays - 36 ? 41 : 34
     let daysShown
     daysShown = (this.dateTable[dayNumber].monthMaxDays + startOffset > 35) ? 41 : 34
     let currentMonthDays = this.dateTable.filter(date => (date.dayNumber >= startDate && date.dayNumber <= startDate + daysShown ))
@@ -111,10 +115,12 @@ export default class Calendar extends Component {
   }
 
   /**
+   * Returns the index of a given date
    * 
-   * @param {*} day 
-   * @param {*} month 
-   * @param {*} year 
+   * @param {Number} day 
+   * @param {Number} month 
+   * @param {Number} year 
+   * @return {Number} index
    */
   getDayNumber = (day, month, year) => {
     let dayNumber = 0;
@@ -134,6 +140,9 @@ export default class Calendar extends Component {
     }
   }
 
+  /**
+   * Toggles the calendar visibility
+   */
   toggleCalendar = () => {
     const isCollapsed = this.state.collapsed ? false : true
     let newState = this.state
@@ -141,6 +150,11 @@ export default class Calendar extends Component {
     this.setState(newState)
   }
 
+  /**
+   * Changes the date when selected from the topbar
+   * 
+   * @param {Event} change The onChange event that triggers this method
+   */
   changeDate = (change) => {
     const newState = this.state
     switch (change.target.name) {
@@ -167,6 +181,11 @@ export default class Calendar extends Component {
     this.setState(newState)
   }
 
+  /**
+   * Changes the current month when selected from the main calendar
+   * 
+   * @param {Number} direction Next or previous month
+   */
   changeMonth = (direction) => {
     const newState = this.state
     newState.currentDate.month += direction
@@ -190,6 +209,11 @@ export default class Calendar extends Component {
     this.setState(newState)
   }
 
+  /**
+   * Changes the current year when selected from the main calendar
+   * 
+   * @param {Number} direction Next or previous year
+   */
   changeYear = (direction) => {
     const newState = this.state
     newState.currentDate.year += direction
@@ -199,6 +223,11 @@ export default class Calendar extends Component {
     this.setState(newState)
   }
 
+  /**
+   * Changes the current day when clicked directly on a calendar day
+   * 
+   * @param {Event} day The onClick event that triggers this method
+   */
   selectDay = (day) => {
     const newState = this.state
     if (day.target.classList[1] === 'other-month' && parseInt(day.target.innerHTML) > 15) {
@@ -211,6 +240,9 @@ export default class Calendar extends Component {
     this.setState(newState)
   }
 
+  /**
+   * The main render method
+   */
   render() {
     return (
       <div id="calendar">
