@@ -30,7 +30,7 @@ export default class Calendar extends Component {
     currentDate: {
       day: 10,
       dayName: "do",
-      dayNumber: 41906,
+      dayNumber: 43360,
       month: 2,
       monthName: "februari",
       monthMaxDays: 32,
@@ -55,8 +55,8 @@ export default class Calendar extends Component {
         // months
         for (let m = 1; m <= 11; m++) {
             // days
-            const evenOrOdd = m % 2 ? 0 : 1;
-            for (let d = 1; d <= (31 + evenOrOdd); d++) {
+            const evenOrOdd = m % 2 ? 1 : 0
+            for (let d = 1; d <= (32 + evenOrOdd); d++) {
                 const mn = this.monthNames[(m - 1) % 11]
                 const dn = this.dayNames[dayNumber % 7]
                 const date = {
@@ -65,7 +65,7 @@ export default class Calendar extends Component {
                   year: y,
                   dayName: dn,
                   monthName: mn,
-                  monthMaxDays: 31 + evenOrOdd,
+                  monthMaxDays: 32 + evenOrOdd,
                   dayNumber: dayNumber
                 }
                 this.dateTable.push(date);
@@ -89,20 +89,23 @@ export default class Calendar extends Component {
    * @param {*} day 
    */
   getCurrentMonth = (dayNumber) => {
+    let offsetDay = dayNumber
     const month = this.dateTable[dayNumber].month
     let startOffset = 0
-    while (this.dateTable[dayNumber].month === month) {
-      dayNumber--
+    while (this.dateTable[offsetDay].month === month) {
+      offsetDay--
     }
-    dayNumber++
-    if (this.dateTable[dayNumber].dayName !== 'zo') {
-      while (this.dateTable[dayNumber].dayName !== 'zo') {
-        dayNumber--
-        startOffset--
+    offsetDay++
+    if (this.dateTable[offsetDay].dayName !== 'zo') {
+      while (this.dateTable[offsetDay].dayName !== 'zo') {
+        offsetDay--
+        startOffset++
       }
     }
-    const startDate = this.dateTable[dayNumber].dayNumber
-    const daysShown = startOffset < -3 ? 41 : 34
+    const startDate = this.dateTable[offsetDay].dayNumber
+    // const daysShown = startOffset < this.dateTable[dayNumber].monthMaxDays - 36 ? 41 : 34
+    let daysShown
+    daysShown = (this.dateTable[dayNumber].monthMaxDays + startOffset > 35) ? 41 : 34
     let currentMonthDays = this.dateTable.filter(date => (date.dayNumber >= startDate && date.dayNumber <= startDate + daysShown ))
     return currentMonthDays
   }
@@ -120,8 +123,8 @@ export default class Calendar extends Component {
         // months
         for (let m = 1; m <= 11; m++) {
             // days
-            const evenOrOdd = m % 2 ? 0 : 1;
-            for (let d = 1; d <= (31 + evenOrOdd); d++) {
+            const evenOrOdd = m % 2 ? 1 : 0
+            for (let d = 1; d <= (32 + evenOrOdd); d++) {
                 if (d === day && m === month && y === year) {
                     return dayNumber;
                 }
@@ -147,9 +150,11 @@ export default class Calendar extends Component {
       case 'month':
         newState.currentDate.month = parseInt(change.target.value)
         newState.currentDate.monthName = this.monthNames[change.target.value - 1]
-        if (newState.currentDate.day === 32) {
+        if (newState.currentDate.day === 33) {
           newState.currentDate.day--
         }
+        const evenOrOdd = newState.currentDate.month % 2 ? 1 : 0
+        newState.currentDate.monthMaxDays = 32 + evenOrOdd
         break
       case 'year':
         newState.currentDate.year = parseInt(change.target.value)
@@ -173,13 +178,15 @@ export default class Calendar extends Component {
       newState.currentDate.month = 1
       newState.currentDate.year += 1
     }
-    if (newState.currentDate.day === 32) {
+    if (newState.currentDate.day === 33) {
       newState.currentDate.day--
     }
     newState.currentDate.monthName = this.monthNames[newState.currentDate.month - 1]
     const dayNumber = this.getDayNumber(newState.currentDate.day, newState.currentDate.month, newState.currentDate.year)
     newState.currentDate.dayNumber = dayNumber
     newState.currentMonth = this.getCurrentMonth(dayNumber)
+    const evenOrOdd = newState.currentDate.month % 2 ? 1 : 0
+    newState.currentDate.monthMaxDays = 32 + evenOrOdd
     this.setState(newState)
   }
 
